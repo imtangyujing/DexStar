@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DexStar Web</title>
+    <style>
+      :root {
+        --bg: #0b0d31;
+        --panel: #181a4a;
+        --input: #121845;
+        --line: #242a63;
+        --text: #f8fafc;
+        --muted: #95a2c7;
+        --chip-bg: #22285f;
+        --chip-text: #b6c1f1;
+        --primary: #22c55e;
+        --primary-press: #16a34a;
+        --danger: #ef4444;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background:
+          radial-gradient(1000px 480px at 12% -10%, rgba(67, 56, 202, 0.28), transparent 65%),
+          radial-gradient(860px 520px at 95% 90%, rgba(34, 197, 94, 0.15), transparent 70%),
+          var(--bg);
+        color: var(--text);
+        font-family: "PingFang SC", "Segoe UI", sans-serif;
+      }
+
+      .page {
+        max-width: 1320px;
+        margin: 0 auto;
+        padding: 26px 32px 40px;
+      }
+
+      .topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .title {
+        margin: 0;
+        font-size: clamp(30px, 3.8vw, 54px);
+        line-height: 1.08;
+        letter-spacing: 0.01em;
+      }
+
+      .topbar-sub {
+        color: var(--muted);
+        font-size: clamp(18px, 2.1vw, 28px);
+        line-height: 1.2;
+      }
+
+      .chip {
+        display: inline-flex;
+        margin-top: 20px;
+        padding: 12px 22px;
+        border-radius: 0;
+        background: var(--chip-bg);
+        color: var(--chip-text);
+        font-size: clamp(18px, 1.65vw, 36px);
+        font-weight: 700;
+      }
+
+      .card {
+        margin-top: 24px;
+        background: var(--panel);
+        border: 1px solid var(--line);
+        padding: 26px 28px;
+      }
+
+      .field + .field {
+        margin-top: 22px;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 10px;
+        color: #d5ddf6;
+        font-size: clamp(26px, 2.1vw, 46px);
+        font-weight: 700;
+      }
+
+      input,
+      button {
+        font: inherit;
+      }
+
+      .url-input,
+      .readonly-input {
+        width: 100%;
+        border: 1px solid #171f58;
+        background: var(--input);
+        color: var(--text);
+        padding: 14px 18px;
+        font-size: clamp(24px, 1.85vw, 36px);
+        height: clamp(54px, 4.6vw, 74px);
+      }
+
+      .url-input::placeholder {
+        color: #5d6a9e;
+      }
+
+      .path-row {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 14px;
+      }
+
+      .ghost-btn {
+        border: 1px solid #26307d;
+        background: #252d77;
+        color: #d2dbf8;
+        padding: 0 30px;
+        min-width: 210px;
+        font-size: clamp(20px, 1.6vw, 34px);
+        font-weight: 700;
+        height: clamp(54px, 4.6vw, 74px);
+        cursor: default;
+      }
+
+      .action-btn {
+        width: 100%;
+        height: clamp(62px, 5.2vw, 92px);
+        border: none;
+        background: var(--primary);
+        color: #02130a;
+        font-size: clamp(32px, 2.8vw, 56px);
+        font-weight: 800;
+        cursor: pointer;
+        transition: transform 0.18s ease, background-color 0.18s ease;
+      }
+
+      .action-btn:hover {
+        transform: translateY(-1px);
+      }
+
+      .action-btn:active {
+        transform: translateY(0);
+        background: var(--primary-press);
+      }
+
+      .action-btn:disabled {
+        opacity: 0.72;
+        cursor: not-allowed;
+      }
+
+      .mode-wrap {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-bottom: 16px;
+      }
+
+      .mode-btn {
+        border: 1px solid #2f3b91;
+        background: #1f286f;
+        color: #dbe3ff;
+        padding: 10px 14px;
+        min-height: 60px;
+        font-size: 16px;
+        text-align: left;
+        cursor: pointer;
+      }
+
+      .mode-btn strong {
+        display: block;
+        font-size: 17px;
+      }
+
+      .mode-btn span {
+        display: block;
+        margin-top: 4px;
+        color: #9cb0f1;
+        font-size: 12px;
+      }
+
+      .mode-btn.active {
+        border-color: #7f93ff;
+        background: #27318a;
+      }
+
+      .task-panel {
+        margin-top: 18px;
+        background: #111743;
+        border: 1px solid #28317b;
+        padding: 14px;
+      }
+
+      .task-head {
+        display: flex;
+        justify-content: space-between;
+        color: #cbd5f6;
+        font-size: 16px;
+      }
+
+      .progress-track {
+        margin-top: 10px;
+        width: 100%;
+        height: 12px;
+        background: #0d1238;
+        border-radius: 999px;
+        overflow: hidden;
+        border: 1px solid #1f2762;
+      }
+
+      .progress-fill {
+        width: 0%;
+        height: 100%;
+        border-radius: 999px;
+        background: var(--primary);
+        transition: width 0.22s ease;
+      }
+
+      .status {
+        margin-top: 10px;
+        color: var(--muted);
+        font-size: 14px;
+        min-height: 20px;
+      }
+
+      .status.success {
+        color: #7ff2aa;
+      }
+
+      .status.error {
+        color: #ffacac;
+      }
+
+      .download-action {
+        display: none;
+        width: 100%;
+        margin-top: 14px;
+        border: none;
+        background: #22327f;
+        color: #eef2ff;
+        height: 54px;
+        font-size: 20px;
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      .download-action.show {
+        display: block;
+      }
+
+      .download-action.error {
+        background: #501a28;
+        color: #ffd1d8;
+      }
+
+      .download-meta {
+        margin-top: 10px;
+        color: #d1daff;
+        font-size: 14px;
+        line-height: 1.55;
+      }
+
+      .footnote {
+        margin-top: 14px;
+        color: #7784b3;
+        font-size: 12px;
+      }
+
+      @media (max-width: 980px) {
+        .page {
+          padding: 18px 16px 28px;
+        }
+
+        .topbar {
+          display: block;
+        }
+
+        .topbar-sub {
+          margin-top: 4px;
+        }
+
+        .mode-wrap {
+          grid-template-columns: 1fr;
+        }
+
+        .path-row {
+          grid-template-columns: 1fr;
+        }
+
+        .ghost-btn {
+          width: 100%;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .action-btn,
+        .progress-fill {
+          transition: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <header class="topbar">
+        <h1 class="title">DexStar Desktop</h1>
+        <div class="topbar-sub">Desktop MP3 Downloader</div>
+      </header>
+
+      <div class="chip">Vibrant Audio Utility</div>
+
+      <section class="card">
+        <div class="mode-wrap" aria-label="分析模式选择">
+          <button id="modeStandardBtn" class="mode-btn active" type="button" onclick="setAnalysisMode('standard')">
+            <strong>普通模式</strong>
+            <span>稳定版（Essentia）</span>
+          </button>
+          <button id="modeExperimentalBtn" class="mode-btn" type="button" onclick="setAnalysisMode('experimental')">
+            <strong>实验通道</strong>
+            <span>实验版（TempoCNN）</span>
+          </button>
+        </div>
+
+        <div class="field">
+          <label for="url">视频链接</label>
+          <input id="url" class="url-input" placeholder="https://www.youtube.com/watch?v=..." />
+        </div>
+
+        <div class="field">
+          <label for="outputDirDisplay">保存目录</label>
+          <div class="path-row">
+            <input id="outputDirDisplay" class="readonly-input" value="浏览器下载目录" readonly />
+            <button class="ghost-btn" type="button" aria-label="网页端由浏览器控制保存目录" title="网页端由浏览器控制保存目录">浏览器决定</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <button id="createBtn" class="action-btn" type="button" onclick="createJob()">创建任务并处理</button>
+
+        <div id="taskPanel" class="task-panel" hidden>
+          <div class="task-head">
+            <strong id="taskStage">准备中</strong>
+            <span id="taskPercent">0%</span>
+          </div>
+          <div class="progress-track">
+            <div id="taskProgress" class="progress-fill"></div>
+          </div>
+          <div id="taskMessage" class="status">任务处理中...</div>
+        </div>
+
+        <button id="downloadAction" class="download-action" type="button">下载 MP3</button>
+        <div id="downloadMeta" class="download-meta" hidden></div>
+
+        <div class="footnote">尊重音乐版权。本工具仅供个人学习使用，如涉及商业用途，请联系创作者授权。</div>
+      </section>
+    </div>
+
+    <script>
+      let accessToken = '';
+      let selectedAnalysisMode = 'standard';
+
+      const STATUS_TEXT = {
+        queued: '排队中',
+        downloading: '正在下载源文件',
+        converting: '正在转换音频',
+        analyzing: '正在分析音频',
+        uploading: '正在上传文件',
+        completed: '处理完成',
+        failed: '处理失败',
+        canceled: '已取消',
+      };
+
+      const STATUS_PROGRESS_FALLBACK = {
+        queued: 5,
+        downloading: 20,
+        converting: 55,
+        analyzing: 70,
+        uploading: 85,
+        completed: 100,
+        failed: 0,
+        canceled: 0,
+      };
+
+      function writeToken(token) {
+        accessToken = token;
+        try {
+          localStorage.setItem('grab_access_token', token);
+        } catch (e) {}
+      }
+
+      function restoreToken() {
+        const params = new URLSearchParams(window.location.search);
+        const tokenFromUrl = params.get('access_token');
+        if (tokenFromUrl) {
+          writeToken(tokenFromUrl);
+          history.replaceState({}, '', '/');
+          return;
+        }
+        try {
+          const token = localStorage.getItem('grab_access_token');
+          if (token) {
+            accessToken = token;
+          }
+        } catch (e) {}
+      }
+
+      function clearDownloadAction() {
+        const action = document.getElementById('downloadAction');
+        const meta = document.getElementById('downloadMeta');
+        action.hidden = true;
+        action.className = 'download-action';
+        action.disabled = false;
+        action.textContent = '下载 MP3';
+        action.onclick = null;
+        meta.hidden = true;
+        meta.innerHTML = '';
+      }
+
+      function clampProgress(value) {
+        const n = Number(value);
+        if (Number.isNaN(n)) return 0;
+        if (n < 0) return 0;
+        if (n > 100) return 100;
+        return Math.round(n);
+      }
+
+      function setTaskState({ status, progress, message, tone }) {
+        const panel = document.getElementById('taskPanel');
+        const stage = document.getElementById('taskStage');
+        const percent = document.getElementById('taskPercent');
+        const bar = document.getElementById('taskProgress');
+        const text = document.getElementById('taskMessage');
+        const p = clampProgress(progress);
+
+        panel.hidden = false;
+        stage.textContent = STATUS_TEXT[status] || '任务处理中';
+        percent.textContent = `${p}%`;
+        bar.style.width = `${p}%`;
+        bar.style.backgroundColor = status === 'completed'
+          ? '#22c55e'
+          : (tone === 'error' || status === 'failed' || status === 'canceled')
+            ? '#ef4444'
+            : '#22c55e';
+
+        text.className = 'status';
+        if (tone === 'success' || status === 'completed') {
+          text.classList.add('success');
+        } else if (tone === 'error' || status === 'failed' || status === 'canceled') {
+          text.classList.add('error');
+        }
+        text.textContent = message || '';
+      }
+
+      function setAnalysisMode(mode) {
+        selectedAnalysisMode = mode === 'experimental' ? 'experimental' : 'standard';
+        const standardBtn = document.getElementById('modeStandardBtn');
+        const experimentalBtn = document.getElementById('modeExperimentalBtn');
+
+        if (selectedAnalysisMode === 'experimental') {
+          standardBtn.classList.remove('active');
+          experimentalBtn.classList.add('active');
+        } else {
+          experimentalBtn.classList.remove('active');
+          standardBtn.classList.add('active');
+        }
+      }
+
+      function triggerDownload(downloadUrl) {
+        const a = document.createElement('a');
+        a.href = downloadUrl;
+        a.rel = 'noopener noreferrer';
+        a.style.display = 'none';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      }
+
+      function renderDownloadAction(data) {
+        const action = document.getElementById('downloadAction');
+        const meta = document.getElementById('downloadMeta');
+        const downloadUrl = data.download_url;
+
+        action.hidden = false;
+        action.className = 'download-action show';
+        action.disabled = false;
+        action.textContent = '下载 MP3';
+        action.onclick = () => triggerDownload(downloadUrl);
+
+        meta.hidden = false;
+        const lines = [];
+        if (data.final_filename) {
+          lines.push(`文件名：${data.final_filename}`);
+        }
+        if (data.type_beat_name) {
+          lines.push(`命名：${data.type_beat_name}`);
+        }
+        if (data.bpm) {
+          lines.push(`BPM：${Math.round(data.bpm)}`);
+        }
+        if (data.cover_status === 'embedded') {
+          lines.push('封面：已嵌入 MP3');
+        } else if (data.cover_status === 'failed') {
+          lines.push('封面：嵌入失败（已降级，音频可正常下载）');
+        } else if (data.cover_status === 'not_found') {
+          lines.push('封面：未找到可用封面');
+        }
+        meta.innerHTML = lines.join('<br/>');
+      }
+
+      function renderDownloadError(message) {
+        const action = document.getElementById('downloadAction');
+        const meta = document.getElementById('downloadMeta');
+
+        action.hidden = false;
+        action.className = 'download-action show error';
+        action.disabled = true;
+        action.textContent = message || '任务失败，请稍后重试。';
+        action.onclick = null;
+
+        meta.hidden = true;
+        meta.innerHTML = '';
+      }
+
+      async function safeJson(res) {
+        try {
+          return await res.json();
+        } catch (e) {
+          return {};
+        }
+      }
+
+      function getErrorMessage(data, fallback) {
+        if (!data) return fallback;
+        if (typeof data.error_message === 'string' && data.error_message) return data.error_message;
+        if (typeof data.detail === 'string' && data.detail) return data.detail;
+        if (data.detail && typeof data.detail === 'object') {
+          if (typeof data.detail.message === 'string' && data.detail.message) return data.detail.message;
+          if (typeof data.detail.code === 'string' && data.detail.code) return `错误码：${data.detail.code}`;
+        }
+        return fallback;
+      }
+
+      async function createJob() {
+        const url = document.getElementById('url').value.trim();
+        const createBtn = document.getElementById('createBtn');
+
+        clearDownloadAction();
+
+        if (!url) {
+          const message = '请先粘贴视频链接。';
+          setTaskState({ status: 'failed', progress: 0, message, tone: 'error' });
+          renderDownloadError(message);
+          return;
+        }
+
+        createBtn.disabled = true;
+        setTaskState({ status: 'queued', progress: 3, message: '正在创建任务...', tone: 'normal' });
+
+        try {
+          const headers = { 'Content-Type': 'application/json' };
+          if (accessToken) {
+            headers.Authorization = `Bearer ${accessToken}`;
+          }
+
+          const res = await fetch('/api/v1/jobs', {
+            method: 'POST',
+            headers,
+            body: JSON.stringify({ url, analysis_mode: selectedAnalysisMode }),
+          });
+
+          const data = await safeJson(res);
+          if (!res.ok) {
+            throw new Error(getErrorMessage(data, '创建任务失败，请稍后重试。'));
+          }
+
+          if (!data.job_id) {
+            throw new Error('创建任务失败，请稍后重试。');
+          }
+
+          setTaskState({
+            status: data.status || 'queued',
+            progress: STATUS_PROGRESS_FALLBACK[data.status] || 5,
+            message: '任务已创建，正在排队处理...',
+            tone: 'normal',
+          });
+
+          pollJob(data.job_id);
+        } catch (err) {
+          const msg = (err && err.message) ? err.message : '';
+          const isNetworkIssue = msg.includes('Failed to fetch') || msg.includes('NetworkError');
+          const message = isNetworkIssue
+            ? '当前为预览模式或后端未启动，无法创建任务。请先运行 ./scripts/demo-up.sh'
+            : `创建任务失败：${msg}`;
+
+          setTaskState({ status: 'failed', progress: 0, message, tone: 'error' });
+          renderDownloadError(message);
+        } finally {
+          createBtn.disabled = false;
+        }
+      }
+
+      async function pollJob(jobId) {
+        const maxAttempts = 120;
+
+        for (let i = 0; i < maxAttempts; i += 1) {
+          try {
+            const headers = {};
+            if (accessToken) {
+              headers.Authorization = `Bearer ${accessToken}`;
+            }
+
+            const res = await fetch(`/api/v1/jobs/${jobId}`, { headers });
+            const data = await safeJson(res);
+
+            if (!res.ok) {
+              throw new Error(getErrorMessage(data, '轮询任务状态失败，请稍后重试。'));
+            }
+
+            const status = data.status || 'queued';
+            const progress = data.progress != null ? data.progress : (STATUS_PROGRESS_FALLBACK[status] || 0);
+
+            if (status === 'completed') {
+              setTaskState({ status, progress: 100, message: '处理完成，可以下载文件。', tone: 'success' });
+              if (data.download_url) {
+                renderDownloadAction(data);
+              } else {
+                renderDownloadError('下载链接生成失败，请重试。');
+              }
+              return;
+            }
+
+            if (status === 'failed') {
+              const message = `任务失败：${getErrorMessage(data, '下载失败，请更换链接后重试。')}`;
+              setTaskState({ status, progress, message, tone: 'error' });
+              renderDownloadError(message);
+              return;
+            }
+
+            if (status === 'canceled') {
+              const message = '任务已取消。';
+              setTaskState({ status, progress, message, tone: 'error' });
+              renderDownloadError(message);
+              return;
+            }
+
+            setTaskState({ status, progress, message: STATUS_TEXT[status] || '任务处理中...', tone: 'normal' });
+          } catch (err) {
+            const msg = (err && err.message) ? err.message : '轮询任务状态失败，请稍后重试。';
+            const message = `加载失败：${msg}`;
+            setTaskState({ status: 'failed', progress: 0, message, tone: 'error' });
+            renderDownloadError(message);
+            return;
+          }
+
+          await new Promise((resolve) => setTimeout(resolve, 2000));
+        }
+
+        setTaskState({ status: 'failed', progress: 0, message: '加载失败：任务处理超时，请稍后重试。', tone: 'error' });
+        renderDownloadError('加载失败：任务处理超时，请稍后重试。');
+      }
+
+      restoreToken();
+    </script>
+  </body>
+</html>

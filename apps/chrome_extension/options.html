@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>GRAB 插件设置</title>
+    <style>
+      :root {
+        --bg: #0b1220;
+        --panel: #111827;
+        --ink: #f9fafb;
+        --muted: #9ca3af;
+        --line: #253247;
+        --brand: #22c55e;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        color: var(--ink);
+        background: radial-gradient(circle at top right, #111827, #0b1220);
+        font-family: "Segoe UI", "PingFang SC", sans-serif;
+      }
+      .wrap {
+        max-width: 760px;
+        margin: 32px auto;
+        padding: 24px;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: var(--panel);
+      }
+      h1 {
+        margin: 0 0 16px;
+        font-size: 22px;
+      }
+      .grid {
+        display: grid;
+        gap: 14px;
+      }
+      label {
+        display: block;
+        font-size: 13px;
+        color: var(--muted);
+        margin-bottom: 6px;
+      }
+      input, select {
+        width: 100%;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        font-size: 14px;
+        padding: 10px 12px;
+        color: var(--ink);
+        background: #0f172a;
+      }
+      .row {
+        display: flex;
+        gap: 10px;
+        margin-top: 16px;
+      }
+      button {
+        border: none;
+        border-radius: 10px;
+        padding: 10px 14px;
+        font-size: 14px;
+        cursor: pointer;
+      }
+      .save {
+        color: #052e15;
+        background: linear-gradient(120deg, #16a34a, var(--brand));
+        font-weight: 700;
+      }
+      .reset {
+        color: #e2e8f0;
+        background: #334155;
+      }
+      #status {
+        margin-top: 12px;
+        font-size: 13px;
+        color: #86efac;
+      }
+      #status.error {
+        color: #fca5a5;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="wrap">
+      <h1>GRAB 插件设置</h1>
+      <div class="grid">
+        <div>
+          <label for="apiBase">API 地址</label>
+          <input id="apiBase" type="text" placeholder="https://app.grabhiphop.top" />
+        </div>
+
+        <div>
+          <label for="accessToken">访问 Token（可选）</label>
+          <input id="accessToken" type="text" placeholder="Bearer 后面的 token，可留空" />
+        </div>
+
+        <div>
+          <label for="analysisMode">默认分析模式</label>
+          <select id="analysisMode">
+            <option value="standard">普通模式（standard）</option>
+            <option value="experimental">实验模式（experimental）</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row">
+        <button id="saveBtn" class="save" type="button">保存设置</button>
+        <button id="resetBtn" class="reset" type="button">恢复默认</button>
+      </div>
+      <div id="status"></div>
+    </main>
+
+    <script src="options.js"></script>
+  </body>
+</html>
