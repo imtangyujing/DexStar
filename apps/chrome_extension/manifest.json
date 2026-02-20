@@ -1,10 +1,10 @@
 {
   "manifest_version": 3,
-  "name": "GRAB MP3 Downloader",
+  "name": "DexStar MP3 Downloader",
   "version": "0.1.0",
-  "description": "提交公开视频链接到 GRAB API，生成并下载 MP3。",
+  "description": "提交公开视频链接到 DexStar API，生成并下载 MP3。",
   "action": {
-    "default_title": "GRAB MP3",
+    "default_title": "DexStar MP3",
     "default_popup": "popup.html",
     "default_icon": {
       "16": "icons/icon-16.png",
