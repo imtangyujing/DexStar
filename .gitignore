@@ -4,6 +4,7 @@ __pycache__/
 .coverage
 .env
 .venv/
+.venv_py39_backup_*/
 venv/
 grab.db
 *.db
